@@ -1,0 +1,38 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: block;
+}
+
+.view_page {
+  display: table;
+  /* background-color: aqua; */
+}
+
+
+.image_rap{
+  display: table-cell;
+  /* widthとheightはscriptで動的に指定 */
+  vertical-align: middle;
+  position: relative;
+}
+
+
+#page_index{
+  position: absolute;
+  z-index: 100;
+  top: 0px;
+  color: cornflowerblue;
+}
+
+.img_info {
+  position: absolute;
+  z-index: 90;
+  bottom: 0px;
+  right: 0px;
+  color: cornflowerblue;
+}
+ 

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="./test.css">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="page_index"></div>
+  <div id="viewer"></div>
+
+</body>
+
+<script>
+
+var pages = []; // page毎のElement配列
+var currentPage = 0; // 現在のページ(0スタート)
+
+const SHOW_PAGE = "table";
+const NOT_SHOW = "none";
+
+var images = [
+    {src: "./01_570x380.jpg"},
+    {src: "./02_650x365.jpg"},
+    {src: "./03_670x542.jpg"},
+    {src: "./04_275x183.jpeg"},
+    {src: "./05_850x638.jpg"},
+    {src: "./06_850x638.jpg"},
+    {src: "./07_920x1225.png"},
+    {src: "./08_920x1225.png"},
+    {src: "./02_650x365.jpg"},
+  ];
+
+images.forEach((image)=>{
+  var img_element = new Image();
+  img_element.src = image.src;
+
+  img_element.onload = function(){
+    image.width = img_element.naturalWidth;
+    image.height = img_element.naturalHeight;
+  }
+});
+
+console.log(images);
+
+
+
+window.onload = function(){
+  showPreview();
+};
+
+window.onresize = function(){
+  console.log("画面サイズ変更");
+  showPreview();
+};
+
+function showPreview(){
+
+  var win_width = window.innerWidth;
+  var win_height = window.innerHeight;
+
+  console.log("幅:" + win_width);
+  console.log("高さ:" + win_height);
+
+  var div_viewer = document.getElementById("viewer");
+  div_viewer.innerHTML = "";
+
+  var rap_width = Math.floor(win_width / 2);
+  var rap_height = win_height;
+
+  var image_rap = document.getElementsByClassName("image_rap");
+  image_rap.width = rap_width.toString();
+  image_rap.height = rap_height.toString();
+
+
+  // 画面サイズの変更による再構築で初期化が必要
+  pages = [];
+  // 右から左の画像ビュアー
+  for(var i = 0; i < images.length; i+=2){
+    console.log("i: "+i)
+
+    var view_page = document.createElement("div");
+    view_page.className = "view_page";
+
+    var img_rap_left;
+    // 左側
+    if((i + 1) < images.length){
+      // 残りページが1ページの場合は追加しない
+      img_rap_left = createImageRapper(images[i+1], rap_width, rap_height);
+    }else{
+      // 空白を追加する
+      img_rap_left = createImageRapper(null, rap_width, rap_height);
+    }
+    view_page.appendChild(img_rap_left);
+
+    // 右側
+    var img_rap_right = createImageRapper(images[i], rap_width, rap_height);
+    view_page.appendChild(img_rap_right);
+
+    // 1ページ目以外は非表示にする
+    view_page.style.display = NOT_SHOW;
+
+    // ページコントロールの為ページElementの配列を生成しておく
+    pages.push(view_page);
+
+    div_viewer.appendChild(view_page);
+
+  }
+
+  // 現在のページだけ表示
+  pages[currentPage].style.display = SHOW_PAGE;
+//  currentPage = 0;
+
+  // pageのindex/全ページを表示
+  modifyPageIndex();
+}
+
+function createImageRapper(image, rap_width, rap_height){
+
+  var img_rap = document.createElement('div');
+  img_rap.className = "image_rap";
+  img_rap.style.width = rap_width + "px";
+  img_rap.style.height = rap_height + "px";
+
+
+  if(image != null){
+    var img = document.createElement('img');
+    img.src = image.src;
+
+    // 拡大縮小したときに倍率の低い方がmaxになるようにする
+    // displayにtable/table-cellを使えば不要になった
+    var scale_horizon = rap_width / image.width;
+    var scale_vertical = rap_height / image.height;
+    if(scale_horizon < scale_vertical){
+      img.style.width = "100%";
+    }else{
+      img.style.height = "100%";
+    }
+    img_rap.appendChild(img);
+
+    // 画像サイズを表示
+    var img_info = document.createElement('div');
+    img_info.className = "img_info";
+    img_info.innerHTML = `${image.width}x${image.height}`;
+    img_rap.appendChild(img_info);
+
+  }
+
+  return img_rap;
+}
+
+// キー押し検知
+document.addEventListener('keydown', (event) => {
+  var keyName = event.key;
+
+  console.log("currentPageNow: " + currentPage);
+  console.log(keyName);
+
+  switch(keyName){
+    case "ArrowDown":
+    case "ArrowLeft":
+      if(currentPage < pages.length - 1 ){
+        pages[currentPage].style.display = NOT_SHOW;
+        pages[currentPage+1].style.display = SHOW_PAGE;
+        currentPage++;
+        modifyPageIndex();
+      }
+      break;
+    case "ArrowUp":
+    case "ArrowRight":
+      if(currentPage > 0){
+        pages[currentPage].style.display = NOT_SHOW;
+        pages[currentPage-1].style.display = SHOW_PAGE;
+        currentPage--;
+        modifyPageIndex();
+      }
+      break;
+  }
+  console.log("currentPageAfter: " + currentPage);
+
+
+});
+
+
+//
+function modifyPageIndex(){
+  var page_index = document.getElementById("page_index");
+  page_index.innerHTML = (currentPage+1) + "/" + pages.length;
+}
+
+
+</script>
+
+</html>
