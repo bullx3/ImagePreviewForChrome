@@ -8,6 +8,7 @@
 
     "permissions": [
         "tabs",
+        "contextMenus",
         "http://*/*",
         "https://*/*"
     ],
@@ -18,6 +19,11 @@
         "default_popup": "popup.html"
     },
 
+    "background": {
+        "scripts": ["event.js"],
+        "persistent": true
+    },
+
     "icons": {
         "16": "icons/icon_16x16.png",
         "32": "icons/icon_32x32.png",
@@ -26,12 +32,19 @@
     },
 
     "commands": {
-        "_execute_browser_action":{
+        "change_image_viewer":{
             "suggested_key": {
                 "default": "Ctrl+Shift+P",
                 "mac": "Command+Shift+P"
             },
-            "description": "Opens hello.html"
+            "description": "Change ImagePreview"
+        },
+        "_execute_browser_action":{
+            "suggested_key": {
+                "default": "Ctrl+Shift+L",
+                "mac": "Command+Shift+L"
+            },
+            "description": "View ImagePreview's popup"
         }
     }
 }
