@@ -107,6 +107,7 @@ function convertHtml(images){
     position: absolute;
     z-index: 100;
     top: 0px;
+    color: cornflowerblue;
   }
 
   .img_info {
@@ -317,6 +318,7 @@ function convertHtml(images){
   document.body.innerHTML = body_str;
 
   var style_element = document.createElement('style');
+  style_element.type = "text/css";
   style_element.innerHTML = style_str;
   document.head.appendChild(style_element);
 
