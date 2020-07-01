@@ -3,7 +3,7 @@
 */
 
 window.onload = function(){
-  console.log("Extension onload");
+  console.log("Extension onload start");
 
   chrome.tabs.getSelected(null, tab => {
     console.log("tab.id: " + tab.id);
@@ -17,28 +17,46 @@ window.onload = function(){
     var elementTabTitle = this.document.getElementById("tab_title");
     elementTabTitle.innerHTML = tab.title.toString();
 
+    // 設定値を呼び出して
+    var config = loadConfig();
+
+    document.getElementById("filter_chk").checked = config.filter_chk;
+    document.getElementById("filter_x_size").value = config.filter_x_size;
+    document.getElementById("filter_y_size").value = config.filter_y_size;
+
+    console.log("onload getSelected end");
+
+
   });
+  console.log("Extension onload end");
+
 };
 
 // ボタンクリック(変換)
 document.getElementById('btn_exec').onclick = function() {
   console.log("push button btn_exec");
   var filter_chk = document.getElementById("filter_chk").checked;
-  var filter_x_size = document.getElementById("filter_x_size").value;
-  var filter_y_size = document.getElementById("filter_y_size").value;
+  var filter_x_size = parseInt(document.getElementById("filter_x_size").value, 10);
+  var filter_y_size = parseInt(document.getElementById("filter_y_size").value, 10);
+
+
+  var config = {
+    "filter_chk": filter_chk,
+    "filter_x_size": filter_x_size,
+    "filter_y_size": filter_y_size,
+  }
+
+  setConfig(config);
 
   // popoup.htmlで指定した情報をパラメータとして渡してconvert.jsを実行する
   chrome.tabs.executeScript(null, {"code": 
     `
-    let filter_chk = ${filter_chk};
-    let filter_x_size = ${filter_x_size};
-    let filter_y_size = ${filter_y_size};
+    let config = ${JSON.stringify(config)};
     `
     }, () => {
 
-    chrome.tabs.executeScript(null, {"file": "convert.js"}, (result) => {
-     console.log("complete convert.js");
-     console.log(result);
+    chrome.tabs.executeScript(null, {"file": "convert.js"}, () => {
+      console.log("complete convert.js");
     });
   });
 }
@@ -53,4 +71,15 @@ document.getElementById('btn_return').onclick = function() {
   });
 }
 
+document.getElementById('btn_init_config').onclick = function() {
+  console.log("push button btn_init_config");
+  // 設定値初期化
+  initializeConfig();
 
+  // 表示変更
+  var config = loadConfig();
+
+  document.getElementById("filter_chk").checked = config.filter_chk;
+  document.getElementById("filter_x_size").value = config.filter_x_size;
+  document.getElementById("filter_y_size").value = config.filter_y_size;
+}

@@ -2,9 +2,7 @@
   popup.htmlからexecuteScriptで実行され、呼び出し元のサイトでで実行する
  */
 
-console.log(filter_chk);
-console.log(filter_x_size);
-console.log(filter_y_size);
+console.log(config);
 
 var title_elements = this.document.getElementsByTagName("title");
 var title = title_elements[0].innerText;
@@ -61,9 +59,9 @@ const asyncLoadImage = (src) => {
   // popupでチェックボックスを入れている場合、サイズをチェックして縦横両方が指定以下だったら除外する
   
   var filter_images = images;
-  if(filter_chk){
+  if(config.filter_chk){
     filter_images = images.filter( (image) => {
-      return (image.width > filter_x_size && image.width > filter_y_size);
+      return (image.width > config.filter_x_size && image.width > config.filter_y_size);
     });
   }
 

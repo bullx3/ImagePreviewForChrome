@@ -25,14 +25,13 @@ chrome.commands.onCommand.addListener((command) => {
 
 function executeConvert(){
   console.log("executeConvert start");
-  // popoup.htmlで指定が読めないのでデフォルトの情報をパラメータとして渡してconvert.jsを実行する
-  // 設定を保存できるようになったらそちらを使う。
+  // 設定した情報(最後に保存した情報)で実行する
+
+  var config = loadConfig();
 
   chrome.tabs.executeScript(null, {"code": 
     `
-    let filter_chk = true;
-    let filter_x_size = 250;
-    let filter_y_size = 250;
+    let config = ${JSON.stringify(config)}
     `
     }, () => {
 
