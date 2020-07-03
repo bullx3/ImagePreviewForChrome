@@ -48,32 +48,23 @@ document.getElementById('btn_exec').onclick = function() {
 
   setConfig(config);
 
-  // popoup.htmlで指定した情報をパラメータとして渡してconvert.jsを実行する
-  chrome.tabs.executeScript(null, {"code": 
-    `
-    let config = ${JSON.stringify(config)};
-    `
-    }, () => {
+  // ImageViewを表示
+  executeImageView();
 
-    chrome.tabs.executeScript(null, {"file": "convert.js"}, () => {
-      console.log("complete convert.js");
-    });
-  });
 }
 
 // ボタンクリック(戻す)
 document.getElementById('btn_return').onclick = function() {
   console.log("push button btn_return");
 
-  chrome.tabs.reload(null, null, (result) => {
-    console.log("complete reload");
-    console.log(result);
-  });
+  chrome.tabs.goBack();
 }
 
+// ボタンクリック(設定初期化)
 document.getElementById('btn_init_config').onclick = function() {
   console.log("push button btn_init_config");
-  // 設定値初期化
+
+  // 初期化
   initializeConfig();
 
   // 表示変更

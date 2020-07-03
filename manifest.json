@@ -1,10 +1,12 @@
 ﻿{
-    "name": "ImagePreview(Change This)",
+    "name": "ImagePreview",
     "short_name": "I P",
     "version": "1.0",
     "manifest_version": 2,
 
-    "description": "サイトの画像ファイルのみ表示する",
+    "description": "サイトの画像ファイルを漫画表示のように表示する",
+
+    "incognito" : "split",
 
     "permissions": [
         "tabs",
@@ -20,7 +22,11 @@
     },
 
     "background": {
-        "scripts": ["config.js","event.js"],
+        "scripts": [
+            "config.js",
+            "exec_view.js",
+            "event.js"
+        ],
         "persistent": true
     },
 

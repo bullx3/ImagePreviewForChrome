@@ -1,0 +1,40 @@
+/*
+ * preview.css
+ */
+
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: block;
+  height: 100%
+}
+
+.view_page {
+  display: table;
+}
+
+.image_rap{
+  display: table-cell;
+  vertical-align: middle;
+  position: relative;
+}  
+
+#page_index{
+  position: absolute;
+  z-index: 100;
+  top: 0px;
+  color: cornflowerblue;
+}
+
+.img_info {
+  position: absolute;
+  z-index: 90;
+  bottom: 0px;
+  right: 0px;
+  color: cornflowerblue;
+}
+

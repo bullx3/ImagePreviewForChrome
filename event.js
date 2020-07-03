@@ -1,6 +1,9 @@
 /**
  * コンテキストメニュー
  */
+console.log("execute event.js ")
+
+
 chrome.contextMenus.create({
   "title": "Image Viewrに切り替え",
   "type": "normal",
@@ -8,7 +11,7 @@ chrome.contextMenus.create({
   "onclick": (info) => {
     console.log("click contextMenu");
 
-    executeConvert();
+    executeImageView();
 
   }
 });
@@ -19,24 +22,10 @@ chrome.contextMenus.create({
 chrome.commands.onCommand.addListener((command) => {
   console.log('Command:', command);
   if(command == "change_image_viewer"){
-    executeConvert();
+    executeImageView();
   }
 });
 
-function executeConvert(){
-  console.log("executeConvert start");
-  // 設定した情報(最後に保存した情報)で実行する
+// imageViewerへの受け渡し用パラメータ
+var viewerParameter = {}
 
-  var config = loadConfig();
-
-  chrome.tabs.executeScript(null, {"code": 
-    `
-    let config = ${JSON.stringify(config)}
-    `
-    }, () => {
-
-    chrome.tabs.executeScript(null, {"file": "convert.js"}, () => {
-      console.log("complete convert.js");
-    });
-  });
-}
