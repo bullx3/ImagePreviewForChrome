@@ -1,7 +1,7 @@
 ﻿{
     "name": "ImagePreview",
     "short_name": "I P",
-    "version": "1.0",
+    "version": "1.0.0",
     "manifest_version": 2,
 
     "description": "サイトの画像ファイルを漫画表示のように表示する",
