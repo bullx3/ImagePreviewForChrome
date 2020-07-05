@@ -51,7 +51,7 @@ window.onload = function(){
 
   console.log("window.onload");
 
-  document.title = "[View]" + base_title;
+  document.title = "[View][解析中]" + base_title;
 
   loadingElement = document.getElementById("loading");
   
@@ -104,7 +104,8 @@ window.onload = function(){
 
     indicator.status = LOAD_STATUS.complete;
     loadingElement.innerHTML = "";
-    
+    document.title = "[View]" + base_title;
+
     showPreview(filter_images);
     
     console.log("async load Images finish");
