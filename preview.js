@@ -131,11 +131,6 @@ function showPreview(images){
   var rap_width = Math.floor(win_width / 2);
   var rap_height = win_height;
 
-  var image_rap = document.getElementsByClassName("image_rap");
-  image_rap.width = rap_width.toString();
-  image_rap.height = rap_height.toString();
-
-
   // 画面サイズの変更による再構築で初期化が必要
   pages = [];
   // 右から左の画像ビュアー
@@ -154,6 +149,9 @@ function showPreview(images){
       // 空白を追加する
       img_rap_left = createImageRapper(null, rap_width, rap_height);
     }
+    // 左側は右寄せ
+    img_rap_left.style.textAlign = "right";
+
     view_page.appendChild(img_rap_left);
 
     // 右側
