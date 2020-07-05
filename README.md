@@ -16,6 +16,13 @@ chrome拡張機能でサイトの画像を漫画ビュアー風に表示する
 ## Requirement
 
 ## Usage
+Viewerを起動したいタブでbrowser_actionのボタン押しから”変換”ボタンをクリックする。または  
+
+    windows: Ctrl + Shift + P
+    mac : Command + Shift + P
+
+で切り替える。  
+
 
 ## Install
 
