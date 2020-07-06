@@ -1,0 +1,54 @@
+/*
+ * popup.css
+ */
+
+.tab_info {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.tab_info > div {
+  margin: 3px 0 5px 10px;
+  font-size: 0.8em;
+  font-weight: normal;
+  width: 100%;
+  word-break: break-all; /* URLを自動改行させるための対応 */
+}
+
+#images_list table{
+  table-layout: fixed;
+  border-collapse: collapse; /* 一重線 */
+  width: 100%;
+}
+
+.no_match_tr{
+  background-color: lightgray;
+  color: white;
+}
+
+#images_list table th {
+  background-color: grey;
+  border: 1px solid white;
+  color: white;
+}
+
+#images_list table th:nth-child(1){
+  width: 60%;
+}
+
+#images_list table td{
+  font-size: 0.8em;
+  border: 1px solid gray;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#images_list table th:nth-child(2), th:nth-child(3){
+  width: 20%;
+}
+
+#images_list table td:nth-child(2), td:nth-child(3){
+  text-align: center;
+}
+
