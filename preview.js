@@ -245,7 +245,7 @@ document.addEventListener('keydown', (event) => {
 //
 function modifyPageIndex(){
   var page_index = document.getElementById("page_index");
-  page_index.innerHTML = (currentPage+1) + "/" + pages.length;
+  page_index.innerHTML = `${(currentPage+1)}/${pages.length} p (${images.length}枚中${filter_images.length}枚 )`;
 }
 
 function updateIndicator(){
