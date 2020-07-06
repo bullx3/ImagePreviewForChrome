@@ -14,6 +14,18 @@ var base_title = rcv_param.title;
 var images = rcv_param.images.slice();
 var filter_images = images; // フィルタが無効の場合はimagesそのまま
 
+
+const LOAD_STATUS = {
+  init: 0,
+  analizeImage: 1,
+  filtering: 2,
+  complete: 10,
+};
+var loadStatus = LOAD_STATUS.init;
+var indicator = {status: LOAD_STATUS.init, current: 0, length: images.length};
+var loadingElement;
+
+
 // 設定値取得
 var config = loadConfig();
 
@@ -29,15 +41,20 @@ rcv_param = null;
 
 window.onresize = function(){
   console.log("window.onrsize");
-  showPreview(filter_images);
+  // 画像解析が終了するまで呼び出さない。
+  if(indicator.status == LOAD_STATUS.complete){
+    showPreview(filter_images);
+  }
 };
 
 window.onload = function(){
 
   console.log("window.onload");
 
-  document.title = "[View]" + base_title;
+  document.title = "[View][解析中]" + base_title;
 
+  loadingElement = document.getElementById("loading");
+  
   const asyncLoadImage = (src) => {
     // console.log("start asyncLoadImage");
     return new Promise((resolve, reject) => {
@@ -52,18 +69,31 @@ window.onload = function(){
   // 即時asyncで画像データ読み込み
   (async () => {
     console.log("async load Images start");
+
+    // 画像読み込みインジケーター
+    indicator.loadStatus = LOAD_STATUS.analizeImage;
+    updateIndicator();
+
     for(var i in images){
       var image = images[i];
       try {
         const res = await asyncLoadImage(image.src);
         image.width = res.naturalWidth;
         image.height = res.naturalHeight;
+
       } catch (e) {
         console.log('onload error', e);
         image.width = 100;
         image.height = 100;
+      } finally {
+        // インジケーター更新
+        indicator.current++;
+        updateIndicator();
       }
     }
+
+    indicator.status = LOAD_STATUS.filtering;
+    loadingElement.innerHTML = "フィルタリング中";
 
     filter_images = images;
     if(config.filter_chk){
@@ -71,7 +101,11 @@ window.onload = function(){
         return (image.width > config.filter_x_size && image.width > config.filter_y_size);
       });
     }
-    
+
+    indicator.status = LOAD_STATUS.complete;
+    loadingElement.innerHTML = "";
+    document.title = "[View]" + base_title;
+
     showPreview(filter_images);
     
     console.log("async load Images finish");
@@ -81,6 +115,9 @@ window.onload = function(){
 
 function showPreview(images){
   console.log("showPrevie start")
+
+  // インジケータを非表示
+  document.querySelector("#load_indicator").style.display = "none";
 
   var win_width = window.innerWidth;
   var win_height = window.innerHeight;
@@ -93,11 +130,6 @@ function showPreview(images){
 
   var rap_width = Math.floor(win_width / 2);
   var rap_height = win_height;
-
-  var image_rap = document.getElementsByClassName("image_rap");
-  image_rap.width = rap_width.toString();
-  image_rap.height = rap_height.toString();
-
 
   // 画面サイズの変更による再構築で初期化が必要
   pages = [];
@@ -117,6 +149,9 @@ function showPreview(images){
       // 空白を追加する
       img_rap_left = createImageRapper(null, rap_width, rap_height);
     }
+    // 左側は右寄せ
+    img_rap_left.style.textAlign = "right";
+
     view_page.appendChild(img_rap_left);
 
     // 右側
@@ -210,5 +245,13 @@ document.addEventListener('keydown', (event) => {
 //
 function modifyPageIndex(){
   var page_index = document.getElementById("page_index");
-  page_index.innerHTML = (currentPage+1) + "/" + pages.length;
+  page_index.innerHTML = `${(currentPage+1)}/${pages.length} p (${images.length}枚中${filter_images.length}枚 )`;
+}
+
+function updateIndicator(){
+  loadingElement.innerHTML = "画像解析 " + (indicator.current + 1) + " / " + indicator.length;
+
+  // インジゲータ更新
+  var percent = Math.floor((indicator.current / indicator.length) * 100);
+  document.querySelector("#load_indicator").style.width = `${percent}%`;
 }

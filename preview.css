@@ -38,3 +38,14 @@ body {
   color: cornflowerblue;
 }
 
+#loading {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+#load_indicator {
+  width: 0%; /* jsで増やしていく */
+  height: 50px;
+  margin: 10px;
+  background-color: greenyellow;
+}
