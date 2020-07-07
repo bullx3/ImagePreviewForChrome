@@ -13,6 +13,7 @@ console.log(rcv_param);
 var base_title = rcv_param.title;
 var images = rcv_param.images.slice();
 var filter_images = images; // フィルタが無効の場合はimagesそのまま
+var errorCount = 0;
 
 
 const LOAD_STATUS = {
@@ -83,8 +84,9 @@ window.onload = function(){
 
       } catch (e) {
         console.log('onload error', e);
-        image.width = 100;
-        image.height = 100;
+        errorCount++;
+        image.width = 0;
+        image.height = 0;
       } finally {
         // インジケーター更新
         indicator.current++;
@@ -115,7 +117,8 @@ window.onload = function(){
       document.querySelector("#load_indicator").style.display = "none";
 
       var div_viewer = document.getElementById("viewer");
-      div_viewer.innerHTML = `表示する画像ファイルがありません(${images.length}枚の画像がフィルタリング中)<br><br>\n`;
+      var errorDisp = errorCount > 0 ? `(<span class="error">エラー数${this.errorCount}</span>)` : "";
+      div_viewer.innerHTML = `表示する画像ファイルがありません(${images.length}枚の画像がフィルタリング中${errorDisp})<br><br>\n`;
       for(var i in images){
         var image = images[i]
 
@@ -260,13 +263,150 @@ document.addEventListener('keydown', (event) => {
 //
 function modifyPageIndex(){
   var page_index = document.getElementById("page_index");
-  page_index.innerHTML = `${(currentPage+1)}/${pages.length} p (${images.length}枚中${filter_images.length}枚 )`;
+  var errorDisp = errorCount > 0 ? `(<span class="error">エラー数${errorCount}</span>)` : "";
+  page_index.innerHTML = `${(currentPage+1)}/${pages.length} p (${images.length}枚中${filter_images.length}枚${errorDisp})`;
 }
 
 function updateIndicator(){
   loadingElement.innerHTML = "画像解析 " + (indicator.current + 1) + " / " + indicator.length;
+  loadingElement.innerHTML += errorCount > 0 ? `(エラー数${errorCount})`: "";
 
   // インジゲータ更新
   var percent = Math.floor((indicator.current / indicator.length) * 100);
   document.querySelector("#load_indicator").style.width = `${percent}%`;
+}
+
+
+document.getElementById("btn_open_dialog").onclick = function(){
+  console.log("click open dialog");
+
+  var config = loadConfig();
+  document.getElementById("filter_chk").checked = config.filter_chk;
+  document.getElementById("filter_x_size").value = config.filter_x_size;
+  document.getElementById("filter_y_size").value = config.filter_y_size;
+
+  createImageTable(config);
+
+  var dialog = document.getElementById("dialog_menu");
+  dialog.show();
+
+}
+
+document.getElementById("btn_close_dialog").onclick = function(){
+  console.log("click close dialog");
+  var dialog = document.getElementById("dialog_menu");
+  dialog.close();
+}
+
+document.getElementById("filter_x_size").onchange = function() {
+  console.log("onchange filter_x_size");
+  createImageTableByTempData();
+}
+
+document.getElementById("filter_y_size").onchange = function() {
+  console.log("onchange filter_y_size");
+  createImageTableByTempData();
+}
+
+
+document.getElementById('btn_update').onclick = function() {
+
+  console.log("click btn_update");
+
+  var filter_chk = document.getElementById("filter_chk").checked;
+  var filter_x_size = parseInt(document.getElementById("filter_x_size").value, 10);
+  var filter_y_size = parseInt(document.getElementById("filter_y_size").value, 10);
+
+  var config = {
+    "filter_chk": filter_chk,
+    "filter_x_size": filter_x_size,
+    "filter_y_size": filter_y_size,
+  }
+
+  setConfig(config);
+
+  // filter_images = images;
+  // if(config.filter_chk){
+  //   filter_images = images.filter( (image) => {
+  //     return (image.width > config.filter_x_size && image.width > config.filter_y_size);
+  //   });
+  // }
+
+  // var dialog = document.getElementById("dialog_menu");
+  // dialog.close();
+
+  // showPreview();
+
+  chrome.tabs.reload();
+}
+
+// ボタンクリック(設定初期化)
+document.getElementById('btn_init_config').onclick = function() {
+  console.log("push button btn_init_config");
+
+  // 初期化
+  initializeConfig();
+
+  // 表示変更
+  var config = loadConfig();
+
+  document.getElementById("filter_chk").checked = config.filter_chk;
+  document.getElementById("filter_x_size").value = config.filter_x_size;
+  document.getElementById("filter_y_size").value = config.filter_y_size;
+}
+
+
+function createImageTableByTempData(){
+  var config_temp = {
+    "filter_chk": document.getElementById("filter_chk").checked,
+    "filter_x_size": document.getElementById("filter_x_size").value,
+    "filter_y_size": document.getElementById("filter_y_size").value,
+  }
+  createImageTable(config_temp);
+}
+
+function createImageTable(config){
+  var dgErrorCount = 0;
+  var dgFilterCount = 0;
+
+  var tbodyElement = document.getElementById("table_images_list_tbody");
+  tbodyElement.innerHTML = "";
+
+  for(var i in images){
+    var image = images[i];
+    var tr = document.createElement("tr");
+
+    var td_file = document.createElement('td');
+    try {
+      var parser = new URL(image.src);
+      var file_name = parser.pathname.split('/').pop();
+      td_file.innerHTML = file_name;
+
+      if(image.width < config.filter_x_size || image.height < config.filter_y_size){
+        tr.className = "no_match_tr";
+      } else {
+        dgFilterCount++;
+      }
+    }catch(e) {
+      dgErrorCount++;
+      td_file.innerHTML = "error";
+      td_file.className = "error";
+      tr.className = "no_match_tr";
+    }
+
+    var td_size_x = document.createElement('td');
+    td_size_x.innerHTML = image.width.toString();
+    var td_size_y = document.createElement('td');
+    td_size_y.innerHTML = image.height.toString();
+
+    tr.appendChild(td_file);
+    tr.appendChild(td_size_x);
+    tr.appendChild(td_size_y);
+
+    tbodyElement.appendChild(tr);
+  }
+
+  var infoElement = document.getElementById("analyze_info");
+  var errorDisp = dgErrorCount > 0 ? `<span class="error">エラー数${dgErrorCount}</span>` : "";
+  infoElement.innerHTML = `${images.length}枚中${dgFilterCount}枚有効${errorDisp}`
 }

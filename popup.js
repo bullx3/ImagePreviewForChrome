@@ -5,6 +5,7 @@
 var images = [];
 var analyzedCount = 0; // 解析数
 var filter_count = 0; // フィルタリングした画像数(有効数)
+var error_count = 0;
 
 window.onload = function(){
   console.log("Extension onload start");
@@ -108,9 +109,14 @@ async function loadAndViewImagesList(config){
         image.trElement = tr;
 
         var td_file = document.createElement('td');
-        var parser = new URL(image.src);
-        var file_name = parser.pathname.split('/').pop();
-        td_file.innerHTML = file_name;
+        try{
+          var parser = new URL(image.src);
+          var file_name = parser.pathname.split('/').pop();
+          td_file.innerHTML = file_name;
+        } catch(e) {
+          console.log(e);
+          td_file.innerHTML = `<span class="error">error</span>`;
+        }
 
         var td_size_x = document.createElement('td');
         var td_size_y = document.createElement('td');
@@ -163,8 +169,11 @@ async function asyncAppendImageSize(image, xElement, yElement, config){
 
   }catch(e){
     console.log('onload error', e);
-    xElement.innerHTML = "error!";
-    yElement.innerHTML = "error!";
+    error_count++;
+    image.width = 0;
+    image.height = 0;
+    xElement.innerHTML =  `<span class="error">error</span>`;
+    yElement.innerHTML =  `<span class="error">error</span>`;
   } finally {
     // 解析情報表示更新
     analyzedCount++;
@@ -178,12 +187,13 @@ async function asyncAppendImageSize(image, xElement, yElement, config){
 
 function showAnalyzeInfo(){
   var analyzeInfoElement = document.getElementById("analyze_info");
+  errorDisp = error_count > 0 ? `(<span class="error">エラー数${error_count}<span>)` : ""
   if(images.length == 0){
     analyzeInfoElement.innerHTML = "画像なし";
   }else if(analyzedCount < images.length){
-    analyzeInfoElement.innerHTML = `解析中(${analyzedCount}/${images.length})`;
+    analyzeInfoElement.innerHTML = `解析中(${analyzedCount}/${images.length}${errorDisp})`;
   }else{
-    analyzeInfoElement.innerHTML = `解析完了(総数${analyzedCount}枚/フィルタリング数${filter_count}枚)`;
+    analyzeInfoElement.innerHTML = `解析完了(総数${analyzedCount}枚/有効数${filter_count}枚${errorDisp})`;
   }
 
 }
