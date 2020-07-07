@@ -15,7 +15,7 @@
   word-break: break-all; /* URLを自動改行させるための対応 */
 }
 
-#images_list table{
+.table_images_list {
   table-layout: fixed;
   border-collapse: collapse; /* 一重線 */
   width: 100%;
@@ -26,17 +26,17 @@
   color: white;
 }
 
-#images_list table th {
+.table_images_list th {
   background-color: grey;
   border: 1px solid white;
   color: white;
 }
 
-#images_list table th:nth-child(1){
+.table_images_list th:nth-child(1){
   width: 60%;
 }
 
-#images_list table td{
+.table_images_list td{
   font-size: 0.8em;
   border: 1px solid gray;
   text-overflow: ellipsis;
@@ -44,11 +44,15 @@
   overflow: hidden;
 }
 
-#images_list table th:nth-child(2), th:nth-child(3){
+.table_images_list th:nth-child(2), th:nth-child(3){
   width: 20%;
 }
 
-#images_list table td:nth-child(2), td:nth-child(3){
+.table_images_list td:nth-child(2), td:nth-child(3){
   text-align: center;
+}
+
+.error {
+  color: red;
 }
 

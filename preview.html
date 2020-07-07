@@ -8,10 +8,44 @@
   <title>[View]</title>
 </head>
 <body>
-  <div id="loading">Now Loadking...</div>
+  <div id="loading">Now Loading...</div>
   <div id="load_indicator"></div>
   <div id="page_index"></div>
   <div id="viewer"></div>
+  <button id="btn_open_dialog">Menu</button>
+
+  <div class="dialog_root">
+    <dialog id="dialog_menu">
+      <h3 class="header_dialog">Menu</h3>
+      <button id="btn_close_dialog">×</button>
+      <div>
+        <div>下記以上のサイズのみ表示する</div>
+        <input id="filter_chk" type="checkbox" name="" value="1" checked="checked" />
+        <input id="filter_x_size" class="input_size" type="number" value="" />
+        &nbsp;×&nbsp;
+        <input  id="filter_y_size"  class="input_size" type="number" value="" />
+      </div>
+      <div>
+        <button id="btn_update">表示更新</button>
+        <button id="btn_init_config">設定初期化</button>
+      </div>
+    <hr>
+      <div id="analyze_info"></div>
+      <div>
+        <table class="table_images_list">
+          <thead>
+            <tr>
+              <th>ファイル名</th>
+              <th>幅</th>
+              <th>高さ</th>
+            </tr>
+          </thead>
+          <tbody id="table_images_list_tbody">
+          </tbody>
+        </table>
+      </div>
+    </dialog>
+  </div>
   <script src="config.js"></script>
   <script src="preview.js"></script>
 </body>
