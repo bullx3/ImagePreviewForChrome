@@ -52,7 +52,7 @@ document.getElementById('btn_exec').onclick = function() {
   setConfig(config);
 
   // ImageViewを表示
-  executeImageView();
+  executeImageView(null);
 
 }
 
