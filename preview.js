@@ -106,7 +106,22 @@ window.onload = function(){
     loadingElement.innerHTML = "";
     document.title = "[View]" + base_title;
 
-    showPreview(filter_images);
+    
+
+    if(filter_images.length > 0){
+      showPreview(filter_images);
+    } else {
+      // 表示する画像がない場合
+      document.querySelector("#load_indicator").style.display = "none";
+
+      var div_viewer = document.getElementById("viewer");
+      div_viewer.innerHTML = `表示する画像ファイルがありません(${images.length}枚の画像がフィルタリング中)<br><br>\n`;
+      for(var i in images){
+        var image = images[i]
+
+        div_viewer.innerHTML += `${image.width} x ${image.height}<br>`;
+      }
+    }
     
     console.log("async load Images finish");
   })();
