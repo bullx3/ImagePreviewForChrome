@@ -51,6 +51,8 @@ body {
 }
 
 #btn_open_dialog {
+  /* 初期状態は非表示*/
+  display: none;
   position: absolute;
   z-index: 200;
   top: 1.5em;

@@ -4,14 +4,21 @@
 console.log("execute event.js ")
 
 
-chrome.contextMenus.create({
-  "title": "新しいタブでImageViewrを表示",
-  "type": "normal",
-  "contexts": ["link"], // リンクのみ有効
-  "onclick": (info) => {
-    console.log("click contextMenu");
-    console.log(info);
+// インストール時にリスナーを設定する
+chrome.runtime.onInstalled.addListener(() => {
+  console.log("onInstalled.addListener")
+    // ここではcontextMenusをID付きで生成のみをおおなう
+    chrome.contextMenus.create({
+      "id": "newTabImageViewer",
+      "title": "新しいタブでImageViewrを表示",
+      "type": "normal",
+      "contexts": ["link"], // リンクのみ有効
+    });
+});
 
+chrome.contextMenus.onClicked.addListener((info)=>{
+  console.log(`chrome.contextMenus.onClicked start(${info.menuItemId})`);
+  if(info.menuItemId == "newTabImageViewer"){
     // 選択されているリンクを新しいタブで開いて新しいタブはImageViewrに繊維する.
     // 新しいタブは非アクティブ
     chrome.tabs.create({"url": info.linkUrl, "active": false}, (tab) =>{
@@ -30,7 +37,3 @@ chrome.commands.onCommand.addListener((command) => {
     executeImageView();
   }
 });
-
-// imageViewerへの受け渡し用パラメータ
-var viewerParameter = {}
-

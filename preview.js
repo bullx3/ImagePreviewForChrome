@@ -8,11 +8,11 @@ const SHOW_PAGE = "table";
 const NOT_SHOW = "none";
 
 // パラメー取得
-var rcv_param = chrome.extension.getBackgroundPage().viewerParameter.param;
+var rcv_param = JSON.parse(localStorage["viewParam"]);
 console.log(rcv_param);
 var base_title = rcv_param.title;
-var images = rcv_param.images.slice();
-var filter_images = images; // フィルタが無効の場合はimagesそのまま
+var all_images = rcv_param.images.slice();
+var filter_images = all_images; // フィルタが無効の場合はimagesそのまま
 var errorCount = 0;
 
 
@@ -23,7 +23,7 @@ const LOAD_STATUS = {
   complete: 10,
 };
 var loadStatus = LOAD_STATUS.init;
-var indicator = {status: LOAD_STATUS.init, current: 0, length: images.length};
+var indicator = {status: LOAD_STATUS.init, current: 0, length: all_images.length};
 var loadingElement;
 
 
@@ -33,7 +33,7 @@ var config = loadConfig();
 
 
 console.log(base_title);
-console.log(images);
+console.log(all_images);
 console.log(config);
 
 // 一度受け取ったら不要な為削除しておく
@@ -75,8 +75,8 @@ window.onload = function(){
     indicator.loadStatus = LOAD_STATUS.analizeImage;
     updateIndicator();
 
-    for(var i in images){
-      var image = images[i];
+    for(var i in all_images){
+      var image = all_images[i];
       try {
         const res = await asyncLoadImage(image.src);
         image.width = res.naturalWidth;
@@ -97,38 +97,29 @@ window.onload = function(){
     indicator.status = LOAD_STATUS.filtering;
     loadingElement.innerHTML = "フィルタリング中";
 
-    filter_images = images;
-    if(config.filter_chk){
-      filter_images = images.filter( (image) => {
-        return (image.width > config.filter_x_size && image.width > config.filter_y_size);
-      });
-    }
+    filter_images = filterImages(all_images, config);
 
     indicator.status = LOAD_STATUS.complete;
     loadingElement.innerHTML = "";
     document.title = "[View]" + base_title;
 
     
+    showPreview(filter_images);
 
-    if(filter_images.length > 0){
-      showPreview(filter_images);
-    } else {
-      // 表示する画像がない場合
-      document.querySelector("#load_indicator").style.display = "none";
 
-      var div_viewer = document.getElementById("viewer");
-      var errorDisp = errorCount > 0 ? `(<span class="error">エラー数${this.errorCount}</span>)` : "";
-      div_viewer.innerHTML = `表示する画像ファイルがありません(${images.length}枚の画像がフィルタリング中${errorDisp})<br><br>\n`;
-      for(var i in images){
-        var image = images[i]
-
-        div_viewer.innerHTML += `${image.width} x ${image.height}<br>`;
-      }
-    }
-    
     console.log("async load Images finish");
   })();
 };
+
+function filterImages(images, config){
+  var filterImages = images;
+  if(config.filter_chk){
+    filterImages = images.filter( (image) => {
+      return (image.width > config.filter_x_size && image.width > config.filter_y_size);
+    });
+  }
+  return filterImages;
+}
 
 
 function showPreview(images){
@@ -136,6 +127,25 @@ function showPreview(images){
 
   // インジケータを非表示
   document.querySelector("#load_indicator").style.display = "none";
+  // page indexも一旦初期化
+  var page_index = document.getElementById("page_index");
+  page_index.innerHTML = "";
+  // ダイアログ表示を有効にする
+  var btn_open_dialog = document.getElementById("btn_open_dialog");
+  btn_open_dialog.style.display = "block";
+
+  if(images.length == 0){
+    // 表示する画像がない場合
+    var div_viewer = document.getElementById("viewer");
+    var errorDisp = errorCount > 0 ? `(<span class="error">エラー数${this.errorCount}</span>)` : "";
+    div_viewer.innerHTML = `表示する画像ファイルがありません(${all_images.length}枚の画像がフィルタリング中${errorDisp})<br><br>\n`;
+    for(var i in images){
+      var image = images[i]
+
+      div_viewer.innerHTML += `${image.width} x ${image.height}<br>`;
+    }
+    return;
+  }
 
   var win_width = window.innerWidth;
   var win_height = window.innerHeight;
@@ -264,7 +274,7 @@ document.addEventListener('keydown', (event) => {
 function modifyPageIndex(){
   var page_index = document.getElementById("page_index");
   var errorDisp = errorCount > 0 ? `(<span class="error">エラー数${errorCount}</span>)` : "";
-  page_index.innerHTML = `${(currentPage+1)}/${pages.length} p (${images.length}枚中${filter_images.length}枚${errorDisp})`;
+  page_index.innerHTML = `${(currentPage+1)}/${pages.length} p (${all_images.length}枚中${filter_images.length}枚${errorDisp})`;
 }
 
 function updateIndicator(){
@@ -285,7 +295,7 @@ document.getElementById("btn_open_dialog").onclick = function(){
   document.getElementById("filter_x_size").value = config.filter_x_size;
   document.getElementById("filter_y_size").value = config.filter_y_size;
 
-  createImageTable(config);
+  createImageTable(all_images, config);
 
   var dialog = document.getElementById("dialog_menu");
   dialog.show();
@@ -325,19 +335,9 @@ document.getElementById('btn_update').onclick = function() {
 
   setConfig(config);
 
-  // filter_images = images;
-  // if(config.filter_chk){
-  //   filter_images = images.filter( (image) => {
-  //     return (image.width > config.filter_x_size && image.width > config.filter_y_size);
-  //   });
-  // }
+  filter_images = filterImages(all_images, config);
 
-  // var dialog = document.getElementById("dialog_menu");
-  // dialog.close();
-
-  // showPreview();
-
-  chrome.tabs.reload();
+  showPreview(filter_images);
 }
 
 // ボタンクリック(設定初期化)
@@ -362,10 +362,10 @@ function createImageTableByTempData(){
     "filter_x_size": document.getElementById("filter_x_size").value,
     "filter_y_size": document.getElementById("filter_y_size").value,
   }
-  createImageTable(config_temp);
+  createImageTable(all_images, config_temp);
 }
 
-function createImageTable(config){
+function createImageTable(images, config){
   var dgErrorCount = 0;
   var dgFilterCount = 0;
 
