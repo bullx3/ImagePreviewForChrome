@@ -8,7 +8,7 @@ const SHOW_PAGE = "table";
 const NOT_SHOW = "none";
 
 // パラメー取得
-var rcv_param = chrome.extension.getBackgroundPage().viewerParameter.param;
+var rcv_param = JSON.parse(localStorage["viewParam"]);
 console.log(rcv_param);
 var base_title = rcv_param.title;
 var images = rcv_param.images.slice();

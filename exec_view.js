@@ -9,8 +9,7 @@ function executeImageView(tabId){
     console.log("scraping.js callback");
     console.log(result[0]);
     // 何故か戻りが配列の0になる。Objectの場合だけ？
-    var backgroundPage = chrome.extension.getBackgroundPage();
-    backgroundPage.viewerParameter.param = result[0];
+    localStorage["viewParam"] = JSON.stringify(result[0]);
 
     // view用のページを表示
     chrome.tabs.update(tabId, {"url": "preview.html"}, () =>{

@@ -27,7 +27,7 @@
             "exec_view.js",
             "event.js"
         ],
-        "persistent": true
+        "persistent": false
     },
 
     "icons": {
