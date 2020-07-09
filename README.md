@@ -21,10 +21,12 @@ chrome拡張機能でサイトの画像を漫画ビュアー風に表示する
 
 Viewerを起動したいタブでbrowser_actionのボタン押しから”変換”ボタンをクリックする。または  
 
-    windows: Ctrl + Shift + P
-    mac : Command + Shift + P
+    windows: Ctrl + Shift + O
+    mac : Command + Shift + O
 
 で切り替える。  
+
+またはImagePreview表示したいURLのリンクにコンテキストメニューから指定すると新しいタブが開きImagePreview表示を行う  
 
 ## Install
 

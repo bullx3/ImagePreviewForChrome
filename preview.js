@@ -8,7 +8,7 @@ const SHOW_PAGE = "table";
 const NOT_SHOW = "none";
 
 // パラメー取得
-var rcv_param = JSON.parse(localStorage["viewParam"]);
+var rcv_param = JSON.parse(localStorage["previewParam"]);
 console.log(rcv_param);
 var base_title = rcv_param.title;
 var all_images = rcv_param.images.slice();
@@ -52,7 +52,7 @@ window.onload = function(){
 
   console.log("window.onload");
 
-  document.title = "[View][解析中]" + base_title;
+  document.title = "[Preview][解析中]" + base_title;
 
   loadingElement = document.getElementById("loading");
   
@@ -101,7 +101,7 @@ window.onload = function(){
 
     indicator.status = LOAD_STATUS.complete;
     loadingElement.innerHTML = "";
-    document.title = "[View]" + base_title;
+    document.title = "[Preview]" + base_title;
 
     
     showPreview(filter_images);
