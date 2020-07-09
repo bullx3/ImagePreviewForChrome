@@ -38,7 +38,7 @@
     },
 
     "commands": {
-        "change_image_viewer":{
+        "change_image_preview":{
             "suggested_key": {
                 "default": "Ctrl+Shift+P",
                 "mac": "Command+Shift+P"
