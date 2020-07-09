@@ -1,7 +1,7 @@
 ﻿{
     "name": "ImagePreview",
     "short_name": "I P",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "manifest_version": 2,
 
     "description": "サイトの画像ファイルを漫画ビュアーのように表示する",
