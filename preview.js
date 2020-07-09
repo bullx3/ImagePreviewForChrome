@@ -27,14 +27,11 @@ var indicator = {status: LOAD_STATUS.init, current: 0, length: all_images.length
 var loadingElement;
 
 
-// 設定値取得
-var config = loadConfig();
 
 
 
 console.log(base_title);
 console.log(all_images);
-console.log(config);
 
 // 一度受け取ったら不要な為削除しておく
 rcv_param = null;
@@ -97,6 +94,9 @@ window.onload = function(){
     indicator.status = LOAD_STATUS.filtering;
     loadingElement.innerHTML = "フィルタリング中";
 
+    var config = loadConfig();
+    console.log(config);
+
     filter_images = filterImages(all_images, config);
 
     indicator.status = LOAD_STATUS.complete;
@@ -115,7 +115,7 @@ function filterImages(images, config){
   var filterImages = images;
   if(config.filter_chk){
     filterImages = images.filter( (image) => {
-      return (image.width > config.filter_x_size && image.width > config.filter_y_size);
+      return (image.width >= config.filter_x_size && image.height >= config.filter_y_size);
     });
   }
   return filterImages;
@@ -291,9 +291,11 @@ document.getElementById("btn_open_dialog").onclick = function(){
   console.log("click open dialog");
 
   var config = loadConfig();
+  console.log(config);
   document.getElementById("filter_chk").checked = config.filter_chk;
   document.getElementById("filter_x_size").value = config.filter_x_size;
   document.getElementById("filter_y_size").value = config.filter_y_size;
+
 
   createImageTable(all_images, config);
 
@@ -332,6 +334,7 @@ document.getElementById('btn_update').onclick = function() {
     "filter_x_size": filter_x_size,
     "filter_y_size": filter_y_size,
   }
+  console.log(config);
 
   setConfig(config);
 
@@ -349,6 +352,7 @@ document.getElementById('btn_init_config').onclick = function() {
 
   // 表示変更
   var config = loadConfig();
+  console.log(config);
 
   document.getElementById("filter_chk").checked = config.filter_chk;
   document.getElementById("filter_x_size").value = config.filter_x_size;
