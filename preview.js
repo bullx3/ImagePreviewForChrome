@@ -127,12 +127,17 @@ function showPreview(images){
 
   // インジケータを非表示
   document.querySelector("#load_indicator").style.display = "none";
+
+  // viewerのメニュー表示
+  let viewerMenu = document.getElementById("viewer_menu");
+  viewerMenu.style.display = "block";
+
   // page indexも一旦初期化
   var page_index = document.getElementById("page_index");
   page_index.innerHTML = "";
-  // ダイアログ表示を有効にする
-  var btn_open_dialog = document.getElementById("btn_open_dialog");
-  btn_open_dialog.style.display = "block";
+
+  var title_view = document.getElementById("title_view");
+  title_view.innerHTML = base_title;
 
   if(images.length == 0){
     // 表示する画像がない場合
@@ -339,6 +344,9 @@ document.getElementById('btn_update').onclick = function() {
   setConfig(config);
 
   filter_images = filterImages(all_images, config);
+
+  // 画像表示数が少なくなった時に現在のページが維持できない可能性がある為為初期化する
+  currentPage = 0;
 
   showPreview(filter_images);
 }
