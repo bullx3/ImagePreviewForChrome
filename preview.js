@@ -345,6 +345,9 @@ document.getElementById('btn_update').onclick = function() {
 
   filter_images = filterImages(all_images, config);
 
+  // 画像表示数が少なくなった時に現在のページが維持できない可能性がある為為初期化する
+  currentPage = 0;
+
   showPreview(filter_images);
 }
 
